@@ -8,4 +8,14 @@ const totalLikes = (blogs) => {
   }
   return blogs.map((blog) => blog.likes).reduce((a, c) => a + c, 0)
 }
-module.exports = { dummy, totalLikes }
+const favouriteBlog = (blogs) => {
+  let highestLikes = Math.max(...blogs.map((blog) => blog.likes))
+  let favouriteBlog = blogs.find((blog) => blog.likes === highestLikes)
+
+  return {
+    title: favouriteBlog.title,
+    author: favouriteBlog.author,
+    likes: favouriteBlog.likes,
+  }
+}
+module.exports = { dummy, totalLikes, favouriteBlog }
