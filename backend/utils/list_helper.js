@@ -18,4 +18,18 @@ const favouriteBlog = (blogs) => {
     likes: favouriteBlog.likes,
   }
 }
-module.exports = { dummy, totalLikes, favouriteBlog }
+const mostBlogs = (lists) => {
+  function getOccurance(arrs, author) {
+    let count = 0
+    arrs.forEach((v) => v === author && count++)
+    return { author: author, blogs: count }
+  }
+  const authorList = lists.map((blog) => blog.author)
+  const blogStats = lists.map((author) => {
+    return getOccurance(authorList, author.author)
+  })
+  let highestCount = Math.max(...blogStats.map((blog) => blog.blogs))
+  return blogStats.find((blog) => blog.blogs === highestCount)
+}
+
+module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs }
