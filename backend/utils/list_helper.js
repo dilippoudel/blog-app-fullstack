@@ -31,5 +31,28 @@ const mostBlogs = (lists) => {
   let highestCount = Math.max(...blogStats.map((blog) => blog.blogs))
   return blogStats.find((blog) => blog.blogs === highestCount)
 }
+const mostLikes = (lists) => {
+  function getOccurance(arrs, author) {
+    let likes = 0
+    arrs.forEach((v) => {
+      if (v.author === author) {
+        likes = v.likes + likes
+      }
+    })
+    return { author: author, likes: likes }
+  }
+  const authorList = lists.map((blog) => {
+    return {
+      author: blog.author,
+      likes: blog.likes,
+    }
+  })
 
-module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs }
+  const blogStats = lists.map((author) => {
+    return getOccurance(authorList, author.author)
+  })
+
+  let highestCount = Math.max(...blogStats.map((blog) => blog.likes))
+  return blogStats.find((blog) => blog.likes === highestCount)
+}
+module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs, mostLikes }

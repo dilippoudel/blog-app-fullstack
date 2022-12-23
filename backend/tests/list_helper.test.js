@@ -94,3 +94,13 @@ describe('Calculate the author who has maximum number of blogs', () => {
     })
   })
 })
+
+describe('MOST LIKES BLOGS', () => {
+  test('when multiple blogs occurs', () => {
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17,
+    })
+  })
+})
