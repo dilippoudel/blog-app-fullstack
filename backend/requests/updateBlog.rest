@@ -3,7 +3,6 @@ content-type: application/json
 
 {
    
-    "author": "Samita",
-    "url": "https://localhost:5000/api/blogs/pancake",
-    "likes": 22
+    "author": "Poudel Samita",
+    "url": "https://localhost:5000/api/blogs/pancake"
 }
