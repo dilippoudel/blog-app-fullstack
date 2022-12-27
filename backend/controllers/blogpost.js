@@ -36,7 +36,8 @@ blogpostRouter.post('/', async (req, res, next) => {
     likes: body.likes,
   })
   try {
-    await blog.save().then((savedBlog) => res.send(savedBlog))
+    const savedBlog = await blog.save()
+    res.status(201).send(savedBlog)
   } catch (error) {
     next(error)
   }

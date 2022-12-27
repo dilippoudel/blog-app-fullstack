@@ -42,6 +42,19 @@ describe('testing blogs', () => {
       expect(content.id).toBeDefined()
     }
   })
+  test('should add a valid blog to the database', async () => {
+    const newBlog = {
+      title: 'Super Test',
+      author: 'Shailendra',
+      link: 'https:link/shailendra/testing',
+      likes: 20,
+    }
+    await api.post('/api/blogs').send(newBlog).expect(201)
+    const allblogs = await api.get('/api/blogs')
+    expect(allblogs.body).toHaveLength(blogsLists.length + 1)
+    const blogs = allblogs.body.map((blog) => blog.title)
+    expect(blogs).toContain('Super Test')
+  })
 })
 
 afterAll(() => {
