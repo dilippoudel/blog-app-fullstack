@@ -25,17 +25,17 @@ blogpostRouter.delete('/:id', async (req, res, next) => {
   }
 })
 blogpostRouter.post('/', async (req, res, next) => {
+  const body = req.body
+  if (body === undefined) {
+    return res.status(400).json({ error: 'content missing' })
+  }
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+  })
   try {
-    const body = req.body
-    if (body === undefined) {
-      return res.status(400).json({ error: 'content missing' })
-    }
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes,
-    })
     await blog.save().then((savedBlog) => res.send(savedBlog))
   } catch (error) {
     next(error)
@@ -43,14 +43,14 @@ blogpostRouter.post('/', async (req, res, next) => {
 })
 
 blogpostRouter.put('/:id', async (req, res, next) => {
+  const body = req.body
+  const newBlog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+  }
   try {
-    const body = req.body
-    const newBlog = {
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes,
-    }
     const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, newBlog, {
       new: true,
     })
