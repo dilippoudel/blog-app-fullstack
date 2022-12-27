@@ -35,7 +35,15 @@ describe('testing blogs', () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(blogsLists.length)
   })
+  test('id shoud be defined in database', async () => {
+    const response = await api.get('/api/blogs')
+    const contents = response.body.map((content) => content)
+    for (let content of contents) {
+      expect(content.id).toBeDefined()
+    }
+  })
 })
+
 afterAll(() => {
   mongoose.connection.close()
 })
