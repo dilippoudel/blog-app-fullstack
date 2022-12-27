@@ -66,6 +66,12 @@ describe('testing blogs', () => {
     const parseBlog = await JSON.parse(JSON.stringify(blogFindById.body))
     expect(parseBlog).toHaveProperty('likes', 0)
   })
+  test('blogs should have title or url properties', async () => {
+    const newBlog = {
+      author: 'shailendra',
+    }
+    await api.post('/api/blogs').send(newBlog).expect(400)
+  })
 })
 
 afterAll(() => {
