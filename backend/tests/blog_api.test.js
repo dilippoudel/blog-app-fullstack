@@ -55,6 +55,17 @@ describe('testing blogs', () => {
     const blogs = allblogs.body.map((blog) => blog.title)
     expect(blogs).toContain('Super Test')
   })
+  test('should check the likes property is assigned and default value is 0', async () => {
+    const newBlog = {
+      title: 'Super Test',
+      author: 'Shailendra',
+      link: 'https:link/shailendra/testing',
+    }
+    const response = await api.post('/api/blogs').send(newBlog).expect(201)
+    const blogFindById = await api.get(`/api/blogs/${response.body.id}`)
+    const parseBlog = await JSON.parse(JSON.stringify(blogFindById.body))
+    expect(parseBlog).toHaveProperty('likes', 0)
+  })
 })
 
 afterAll(() => {
