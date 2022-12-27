@@ -44,7 +44,7 @@ describe('Adding and verifying new blog and its field', () => {
       expect(content.id).toBeDefined()
     }
   })
-  test('should add a valid blog to the database', async () => {
+  test('adding a new blog', async () => {
     const newBlog = {
       title: 'Super Test',
       author: 'Shailendra',
@@ -75,6 +75,19 @@ describe('When field(s) of blog(s) are missing', () => {
       author: 'shailendra',
     }
     await api.post('/api/blogs').send(newBlog).expect(400)
+  })
+})
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const oldBlogs = await Blog.find({})
+    const blogToDelete = oldBlogs[0]
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+    const newBlogs = await Blog.find({})
+    expect(newBlogs).toHaveLength(oldBlogs.length - 1)
+  })
+  test('fails with status coded 4000 if id is invalid', async () => {
+    const invalidBlogId = '5a3d5da59070081a82a3445'
+    await api.get(`/api/blogs/${invalidBlogId}`).expect(400)
   })
 })
 
