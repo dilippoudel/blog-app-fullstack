@@ -18,13 +18,13 @@ const blogsLists = [
     likes: 14,
   },
 ]
-describe('testing blogs', () => {
-  beforeEach(async () => {
-    await mongoose.connect(config.MONGODB_URI)
-    await Blog.deleteMany({})
-    await new Blog(blogsLists[0]).save()
-    await new Blog(blogsLists[1]).save()
-  }, 1000000)
+beforeEach(async () => {
+  await mongoose.connect(config.MONGODB_URI)
+  await Blog.deleteMany({})
+  await new Blog(blogsLists[0]).save()
+  await new Blog(blogsLists[1]).save()
+}, 1000000)
+describe('When there are already saved blogs', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -35,6 +35,8 @@ describe('testing blogs', () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(blogsLists.length)
   })
+})
+describe('Adding and verifying new blog and its field', () => {
   test('id shoud be defined in database', async () => {
     const response = await api.get('/api/blogs')
     const contents = response.body.map((content) => content)
@@ -55,6 +57,8 @@ describe('testing blogs', () => {
     const blogs = allblogs.body.map((blog) => blog.title)
     expect(blogs).toContain('Super Test')
   })
+})
+describe('When field(s) of blog(s) are missing', () => {
   test('should check the likes property is assigned and default value is 0', async () => {
     const newBlog = {
       title: 'Super Test',
