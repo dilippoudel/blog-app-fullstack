@@ -1,3 +1,6 @@
+require('dotenv').config()
+const { response } = require('express')
+const jwt = require('jsonwebtoken')
 const blogpostRouter = require('express').Router()
 const Blog = require('../models/blogpost')
 const User = require('../models/user')
@@ -28,15 +31,28 @@ blogpostRouter.delete('/:id', async (req, res, next) => {
     next(error)
   }
 })
+const getTokenFrom = (request) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
+    return authorization.substring(7)
+  }
+  return null
+}
 blogpostRouter.post('/', async (req, res, next) => {
   const body = req.body
+  const token = getTokenFrom(req)
+  // eslint-disable-next-line no-undef
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
   if (body === undefined) {
     return res.status(400).json({ error: 'content missing' })
   }
-  if (body.title === undefined && body.url === undefined) {
+  if (body.title === undefined || body.url === undefined) {
     return res.status(400).json({ error: 'title or url is mandatory' })
   }
-  const user = await User.findById(body.userId)
   const blog = new Blog({
     title: body.title,
     author: body.author,
