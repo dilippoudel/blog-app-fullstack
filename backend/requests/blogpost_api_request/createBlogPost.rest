@@ -2,9 +2,9 @@ POST http://localhost:5000/api/blogs
 content-type: application/json
 
 {
-   "title":"Learning React and Node Js",
+   "title":"Learning TypeScript and Node Js",
    "author":"Shailendra",
    "url":"https://localhost:5000/api/blogs/react",
-   "likes": 10,
+   "likes": 12,
    "userId" : "63ac469e3e6157f6b417ad36"
 }
