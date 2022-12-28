@@ -5,5 +5,6 @@ content-type: application/json
    "title":"Learning React and Node Js",
    "author":"Shailendra",
    "url":"https://localhost:5000/api/blogs/react",
-   "likes": 10
+   "likes": 10,
+   "userId" : "63ac469e3e6157f6b417ad36"
 }
