@@ -1,5 +1,6 @@
 const blogpostRouter = require('express').Router()
 const Blog = require('../models/blogpost')
+const User = require('../models/user')
 blogpostRouter.get('/', async (req, res, next) => {
   try {
     const allBlogs = await Blog.find({})
@@ -32,11 +33,13 @@ blogpostRouter.post('/', async (req, res, next) => {
   if (body.title === undefined && body.url === undefined) {
     return res.status(400).json({ error: 'title or url is mandatory' })
   }
+  const user = await User.findById(body.userId)
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes ?? 0,
+    user: user._id,
   })
   try {
     const savedBlog = await blog.save()
