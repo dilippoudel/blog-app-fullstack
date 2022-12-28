@@ -31,16 +31,9 @@ blogpostRouter.delete('/:id', async (req, res, next) => {
     next(error)
   }
 })
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
-    return authorization.substring(7)
-  }
-  return null
-}
 blogpostRouter.post('/', async (req, res, next) => {
   const body = req.body
-  const token = getTokenFrom(req)
+  const token = req.token
   // eslint-disable-next-line no-undef
   const decodedToken = jwt.verify(token, process.env.SECRET)
   if (!decodedToken.id) {
