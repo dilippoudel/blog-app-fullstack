@@ -1,11 +1,15 @@
 const config = require('./utils/config')
 const express = require('express')
-const app = express()
+const mongoose = require('mongoose')
 const cors = require('cors')
+
+const app = express()
+
 const blogpostRouter = require('./controllers/blogpost')
 const usersRouter = require('./controllers/user')
+const loginRouter = require('./controllers/login')
+
 const middleware = require('./utils/middleware')
-const mongoose = require('mongoose')
 const logger = require('./utils/logger')
 
 logger.info('connecting to database .....')
@@ -26,6 +30,7 @@ app.use(middleware.requestLogger)
 
 app.use('/api/blogs', blogpostRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
