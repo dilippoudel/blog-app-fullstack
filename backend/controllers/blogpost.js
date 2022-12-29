@@ -1,9 +1,16 @@
+require('dotenv').config()
+const { response } = require('express')
+const jwt = require('jsonwebtoken')
 const blogpostRouter = require('express').Router()
 const Blog = require('../models/blogpost')
+const User = require('../models/user')
 blogpostRouter.get('/', async (req, res, next) => {
   try {
-    const allBlogs = await Blog.find({})
-    return res.json(allBlogs)
+    const allBlogs = await Blog.find({}).populate('user', {
+      username: 1,
+      name: 1,
+    })
+    res.json(allBlogs)
   } catch (error) {
     next(error)
   }
@@ -25,32 +32,46 @@ blogpostRouter.delete('/:id', async (req, res, next) => {
   }
 })
 blogpostRouter.post('/', async (req, res, next) => {
+  const body = req.body
+  const token = req.token
+  // eslint-disable-next-line no-undef
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+  if (body === undefined) {
+    return res.status(400).json({ error: 'content missing' })
+  }
+  if (body.title === undefined || body.url === undefined) {
+    return res.status(400).json({ error: 'title or url is mandatory' })
+  }
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes ?? 0,
+    user: user._id,
+  })
   try {
-    const body = req.body
-    if (body === undefined) {
-      return res.status(400).json({ error: 'content missing' })
-    }
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes,
-    })
-    await blog.save().then((savedBlog) => res.send(savedBlog))
+    const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+    res.status(201).send(savedBlog)
   } catch (error) {
     next(error)
   }
 })
 
 blogpostRouter.put('/:id', async (req, res, next) => {
+  const body = req.body
+  const newBlog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes || 0,
+  }
   try {
-    const body = req.body
-    const newBlog = {
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes,
-    }
     const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, newBlog, {
       new: true,
     })

@@ -1,0 +1,8 @@
+PUT http://localhost:5000/api/blogs/63a0b1f2b9a3e7dc6516827a
+content-type: application/json
+
+{
+   
+    "author": "Poudel Samita",
+    "url": "https://localhost:5000/api/blogs/pancake"
+}
