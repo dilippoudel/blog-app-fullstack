@@ -1,6 +1,5 @@
 require('dotenv').config()
 const { response } = require('express')
-const jwt = require('jsonwebtoken')
 const blogpostRouter = require('express').Router()
 const Blog = require('../models/blogpost')
 const User = require('../models/user')
@@ -24,11 +23,9 @@ blogpostRouter.get('/:id', async (req, res, next) => {
   }
 })
 blogpostRouter.delete('/:id', async (req, res, next) => {
-  // eslint-disable-next-line no-undef
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-  const user = decodedToken.id.toString()
   const blog = await Blog.findById(req.params.id)
   const blog_owner_id = blog.user.toString()
+  const user = req.user.toString()
   try {
     if (user === blog_owner_id) {
       await Blog.findByIdAndRemove(req.params.id)
@@ -40,10 +37,7 @@ blogpostRouter.delete('/:id', async (req, res, next) => {
 })
 blogpostRouter.post('/', async (req, res, next) => {
   const body = req.body
-  const token = req.token
-  // eslint-disable-next-line no-undef
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!decodedToken.id) {
+  if (!req.user) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
   if (body === undefined) {

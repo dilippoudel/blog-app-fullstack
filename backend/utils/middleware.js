@@ -1,4 +1,6 @@
+require('dotenv').config()
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -30,9 +32,18 @@ const tokenExtractor = (request, response, next) => {
   }
   return null
 }
+const userExtractor = (request, response, next) => {
+  const token = request.token
+  // eslint-disable-next-line no-undef
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  const user = decodedToken.id
+  request.user = user
+  next()
+}
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
+  userExtractor,
 }
