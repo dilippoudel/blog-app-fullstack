@@ -1,10 +1,11 @@
 POST http://localhost:5000/api/blogs
 content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbWkxMjMiLCJpZCI6IjYzYWNiNzkyNTMwZmZmYzExYjcwM2U5NiIsImlhdCI6MTY3MjMxNDk3M30.09xhuKRuN1zX0hy5AJ9k7CaaiNr-h_muSPvw_mFw6y0
 
 {
    "title":"Learning TypeScript and Node Js",
-   "author":"Shailendra",
+   "author":"Samita",
    "url":"https://localhost:5000/api/blogs/react",
    "likes": 12,
-   "userId" : "63ac469e3e6157f6b417ad36"
+   "userId" : "63acb792530fffc11b703e96"
 }
