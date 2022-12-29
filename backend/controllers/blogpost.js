@@ -24,10 +24,16 @@ blogpostRouter.get('/:id', async (req, res, next) => {
   }
 })
 blogpostRouter.delete('/:id', async (req, res, next) => {
-  console.log('token is ', req.token)
+  // eslint-disable-next-line no-undef
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+  const user = decodedToken.id.toString()
+  const blog = await Blog.findById(req.params.id)
+  const blog_owner_id = blog.user.toString()
   try {
-    await Blog.findByIdAndRemove(req.params.id)
-    return res.status(204).end()
+    if (user === blog_owner_id) {
+      await Blog.findByIdAndRemove(req.params.id)
+      return res.status(204).end()
+    }
   } catch (error) {
     next(error)
   }
