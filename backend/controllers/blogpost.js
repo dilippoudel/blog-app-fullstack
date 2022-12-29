@@ -9,7 +9,7 @@ blogpostRouter.get('/', async (req, res, next) => {
       username: 1,
       name: 1,
     })
-    res.json(allBlogs)
+    res.status(200).json(allBlogs)
   } catch (error) {
     next(error)
   }
