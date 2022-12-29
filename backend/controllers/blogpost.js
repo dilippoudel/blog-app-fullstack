@@ -39,13 +39,13 @@ blogpostRouter.post('/', async (req, res, next) => {
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
-  const user = await User.findById(decodedToken.id)
   if (body === undefined) {
     return res.status(400).json({ error: 'content missing' })
   }
   if (body.title === undefined || body.url === undefined) {
     return res.status(400).json({ error: 'title or url is mandatory' })
   }
+  const user = await User.findById(body.userId)
   const blog = new Blog({
     title: body.title,
     author: body.author,

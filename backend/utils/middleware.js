@@ -28,7 +28,6 @@ const tokenExtractor = (request, response, next) => {
     request.token = authorization
     next()
   }
-  
 }
 module.exports = {
   requestLogger,

@@ -3,9 +3,9 @@ content-type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbWkxMjMiLCJpZCI6IjYzYWM3YzkxZWIwYTg0NWVhMWZmMTViZCIsImlhdCI6MTY3MjI0ODgyMn0.IHqYuMsxAv0jytSw56qd5uhIJq9CTVFMjrt60gqLP8U
 
 {
-   "title":"Learning Authentication and Node Js",
+   "title":"Learning git pull and merge and Node Js",
    "author":"Samita",
    "url":"https://localhost:5000/api/blogs/react",
    "likes": 12,
-   "userId" : "63ac7c91eb0a845ea1ff15bd"
+   "userId" : "63acb792530fffc11b703e96"
 }
