@@ -32,7 +32,6 @@ const createBlogPost = async () => {
     title: 'Testing',
     author: 'Samita',
     url: 'https://linkedin/testing',
-    likes: 20,
     userId: user._id,
   }
   return await api
