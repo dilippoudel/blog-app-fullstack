@@ -3,8 +3,11 @@ const config = require('../utils/config')
 const mongoose = require('mongoose')
 const Blog = require('../models/blogpost')
 const User = require('../models/user')
+const supertest = require('supertest')
+const app = require('../app')
+const api = supertest(app)
 
-beforeAll(async () => {
+beforeEach(async () => {
   await mongoose.connect(config.MONGODB_URI)
   await Blog.deleteMany({})
   await User.deleteMany()
@@ -14,45 +17,52 @@ describe('creating new blogs', () => {
     const res = await testHelper.createBlogPost()
     expect(res.statusCode).toBe(201)
   })
-  test('blogpost should contain user id', async () => {})
+  test('blogpost should contain user', async () => {
+    await testHelper.createBlogPost()
+    const blogs = await api.get('/api/blogs')
+    const users = blogs.body.map((blog) => blog.user)
+    expect(users[0]).toHaveProperty('username', 'hari123')
+    for (let user of users) {
+      expect(user.id).toBeDefined()
+    }
+  })
 })
-// test('id shoud be defined in database', async () => {
-//   const response = await api.get('/api/blogs')
-//   const contents = response.body.map((content) => content)
-//   for (let content of contents) {
-//     expect(content.id).toBeDefined()
-//   }
-// })
 
-// describe('When field(s) of blog(s) are missing', () => {
-//   test('should check the likes property is assigned and default value is 0', async () => {
-//     const newBlog = {
-//       title: 'Super Test',
-//       author: 'Shailendra',
-//       link: 'https:link/shailendra/testing',
-//     }
-//     const response = await api.post('/api/blogs').send(newBlog).expect(201)
-//     const blogFindById = await api.get(`/api/blogs/${response.body.id}`)
-//     const parseBlog = await JSON.parse(JSON.stringify(blogFindById.body))
-//     expect(parseBlog).toHaveProperty('likes', 0)
-//   })
-//   test('blogs should have title or url properties', async () => {
-//     const newBlog = {
-//       author: 'shailendra',
-//     }
-//     await api.post('/api/blogs').send(newBlog).expect(400)
-//   })
-// })
-// describe('deletion of a blog', () => {
-//   test('succeeds with status code 204 if id is valid', async () => {
-//     const oldBlogs = await Blog.find({})
-//     const blogToDelete = oldBlogs[0]
-//     await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
-//     const newBlogs = await Blog.find({})
-//     expect(newBlogs).toHaveLength(oldBlogs.length - 1)
-//   })
-//   test('fails with status coded 4000 if id is invalid', async () => {
-//     const invalidBlogId = '5a3d5da59070081a82a3445'
-//     await api.get(`/api/blogs/${invalidBlogId}`).expect(400)
-//   })
-// })
+describe('blogs validations', () => {
+  test('should check the likes property is assigned and default value is 0', async () => {
+    await testHelper.createBlogPost()
+    const blogs = await api.get('/api/blogs/')
+    expect(blogs.body[0]).toHaveProperty('likes', 0)
+  })
+  test('blogs must have either title or url properties', async () => {
+    const newBlog = {
+      author: 'shailendra',
+    }
+    await testHelper.createUser()
+    const loginResponse = await testHelper.loggedInUser()
+    const blogPostResponse = await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer ${loginResponse.body.token}`)
+      .send(newBlog)
+    expect(blogPostResponse.statusCode).toBe(400)
+    expect(blogPostResponse.body).toEqual({
+      error: 'title or url is mandatory',
+    })
+  })
+})
+describe('deletion of a blog', () => {
+  test('Only the authorized user can delete his/her blog', async () => {
+    await testHelper.createUser()
+    const logInResponse = await testHelper.loggedInUser()
+    await testHelper.createBlogPost()
+    const oldBlogs = await Blog.find({})
+    const blogsToDelete = oldBlogs[0]._id.toString()
+
+    await api
+      .delete(`/api/blogs/${blogsToDelete}`)
+      .set('Authorization', `bearer ${logInResponse.body.token}`)
+      .expect(204)
+    const newBlogs = await Blog.find({})
+    expect(newBlogs).toHaveLength(oldBlogs.length - 1)
+  })
+})
