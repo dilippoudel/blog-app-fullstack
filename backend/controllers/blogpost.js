@@ -57,7 +57,7 @@ blogpostRouter.post(
     if (body.title === undefined || body.url === undefined) {
       return res.status(400).json({ error: 'title or url is mandatory' })
     }
-    const user = await User.findById(body.userId)
+    const user = await User.findById(req.userId)
     const blog = new Blog({
       title: body.title,
       author: body.author,
